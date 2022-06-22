@@ -9,7 +9,7 @@ trigger:
 pool:
  name: binduagent
  demands:
-  - agent.version -equals 2.204.0
+  - agentversion -equals 2.204.0
 
 steps:
 - task: Maven@3
