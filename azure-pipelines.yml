@@ -7,7 +7,7 @@ trigger:
 - master
 
 pool: binduagent
-- demands:
+- demands
     agentversion: '2.163.1'
 
 steps:
