@@ -6,8 +6,7 @@
 trigger:
 - master
 
-pool:
-  vmImage: Microsoft Windows
+pool: binduagent
 
 steps:
 - task: Maven@3
