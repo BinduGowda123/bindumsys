@@ -6,9 +6,10 @@
 trigger:
 - master
 
-pool: binduagent
-- demands
-    agentversion: '2.163.1'
+pool:
+ name: binduagent
+ demands:
+  - agent.version -2.163.1
 
 steps:
 - task: Maven@3
