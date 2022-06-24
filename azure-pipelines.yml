@@ -6,7 +6,7 @@
 trigger:
 - master
 
-pool: binduagent
+pool: bindupool
 
 steps:
 - task: Maven@3
