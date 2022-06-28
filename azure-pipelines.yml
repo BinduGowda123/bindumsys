@@ -1,3 +1,9 @@
+
+Conversation opened. 1 read message.
+
+Skip to content
+Using Msys Tech India Pvt Ltd Mail with screen readers
+
 # Maven
 # Build your Java project and run tests with Apache Maven.
 # Add steps that analyze code, save build artifacts, deploy, and more:
@@ -6,7 +12,7 @@
 trigger:
 - master
 
-pool: bindupool
+pool: ajithagent
 
 steps:
 - task: Maven@3
@@ -19,12 +25,54 @@ steps:
     publishJUnitResults: true
     testResultsFiles: '**/surefire-reports/TEST-*.xml'
     goals: 'package'
-- task: CopyFiles@2
+- task: AzureCLI@2
+  displayName: Resourcegroup
   inputs:
-    Contents: '**/*.war'
-    TargetFolder: '$(build.artifactstagingdirectory)'
-- task: PublishBuildArtifacts@1
+    azureSubscription: 'Free Trial (456685a9-1f1c-4cf4-a4cd-0306d40d5f83)'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: 'az group create --name mytestrg --location eastasia'
+- task: AzureCLI@2
+  displayName: Vnet
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'drop'
-    publishLocation: 'Container'
+    azureSubscription: 'Free Trial (456685a9-1f1c-4cf4-a4cd-0306d40d5f83)'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      az network vnet create -g mytestrg -n testvnet --address-prefix 10.0.0.0/16 \
+          --subnet-name testsubnet --subnet-prefix 10.0.0.0/24
+- task: AzureCLI@2
+  displayName: PublicIP
+  inputs:
+    azureSubscription: 'Free Trial (456685a9-1f1c-4cf4-a4cd-0306d40d5f83)'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: 'az network public-ip create -g mytestrg -n testip --allocation-method Dynamic'
+- task: AzureCLI@2
+  displayName: Securitygroup
+  inputs:
+    azureSubscription: 'Free Trial (456685a9-1f1c-4cf4-a4cd-0306d40d5f83)'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: 'az network nsg create -g mytestrg -n testnsg'
+- task: AzureCLI@2
+  displayName: Nic
+  inputs:
+    azureSubscription: 'Free Trial (456685a9-1f1c-4cf4-a4cd-0306d40d5f83)'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: 'az network nic create -g mytestrg --vnet-name testvnet --subnet testsubnet -n testnic'
+- task: AzureCLI@2
+  displayName: NICconfig
+  inputs:
+    azureSubscription: 'Free Trial (456685a9-1f1c-4cf4-a4cd-0306d40d5f83)'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: 'az network nic ip-config create -g mytestrg -n testipConfig --nic-name testnic --make-primary'
+- task: AzureCLI@2
+  displayName: CreateVM
+  inputs:
+    azureSubscription: 'Free Trial (456685a9-1f1c-4cf4-a4cd-0306d40d5f83)'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: 'az vm create -n testvm -g mytestrg --image UbuntuLTS --public-ip-address testip --authentication-type password --admin-username demouser --admin-password Bindu@123456789'
