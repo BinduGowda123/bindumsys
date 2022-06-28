@@ -12,7 +12,7 @@ Using Msys Tech India Pvt Ltd Mail with screen readers
 trigger:
 - master
 
-pool: ajithagent
+pool: binduagent
 
 steps:
 - task: Maven@3
